@@ -25,15 +25,15 @@ const STORAGE_KEY = "savedRecipes";
 
 let currentRecipeIngredients = [];
 let lastSearchResults = [];
-let currentSearchTerm = "";
+let currentSearchItem = "";
 
 
 async function fetchInitialRecipes() {
 
     try {
-        currentSearchTerm = "Seafood";
+        currentSearchItem = "Chicken";
 
-        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=Chicken`);
+        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${currentSearchItem}`);
         const data = await response.json();
 
         if (data.meals) {
@@ -210,7 +210,7 @@ async function findRecipeByName(mealName) {
         const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${mealName}`);
         const data = await response.json();
 
-        currentSearchTerm = mealName;
+        currentSearchItem = mealName;
         recipeGrid.innerHTML = "";
         if (data.meals) {
             lastSearchResults = data.meals;
@@ -237,19 +237,19 @@ function applyFilters() {
     const selectedCategory = categorySelect.value;
     const heading = document.getElementById('results-heading');
 
-    let headingText = `Showing results for "${currentSearchTerm}"`;
+    let headingText = `Showing results for "${currentSearchItem}"`;
     let filteredResults = lastSearchResults;
 
     if (selectedArea) {
         categorySelect.value = "";
         filteredResults = filteredResults.filter(meal => meal.strArea === selectedArea);
-        headingText = `Showing ${selectedArea} recipes from "${currentSearchTerm}"`;
+        headingText = `Showing ${selectedArea} recipes from "${currentSearchItem}"`;
     }
 
     if (selectedCategory) {
         areaSelect.value = "";
         filteredResults = filteredResults.filter(meal => meal.strCategory === selectedCategory);
-        headingText = `Showing ${selectedCategory} recipes from "${currentSearchTerm}"`;
+        headingText = `Showing ${selectedCategory} recipes from "${currentSearchItem}"`;
     }
     heading.textContent = headingText;
     recipeGrid.innerHTML = "";
