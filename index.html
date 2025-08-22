@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+        integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+
+<body>
+
+    <header>
+
+        <a class="logo" href=""><i class="fa-solid fa-fire-burner logo-i"></i>Recipeak</a>
+
+        <div class="hamburger">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <nav class="nav-list">
+            <a href="">Home</a>
+            <a href="" class="my-list">My List</a>
+            <a href="" id="shopping-list-link">shopping link</a>
+            <a href="#" id="random-recipe-btn">Random recipe</a>
+        </nav>
+
+        <!-- <button id="random-recipe-btn">Random recipe</button> -->
+
+
+    </header>
+
+    <main>
+
+        <section class="hero">
+
+            <h1>Find Your Desired Dish Recipe !</h1>
+
+            <form class="search-box" id="search-form">
+                <input type="text" id="search-input" placeholder="Search recipes..." required>
+                <button type="submit" class="search-btn">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+
+            <p id="hero-desc">Search any recipe e.g. burger, pizza, sandwich, toast.</p>
+
+        </section>
+
+
+        <section class="filter-container">
+
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="area-select">Filter By Cuisin</label>
+                    <select name="area" id="area-select" class="filter-select">
+                        <option value="">--Select an Cuisin--</option>
+                        <option value="Italian">Italian</option>
+                        <option value="Mexican">Meaxican</option>
+                        <option value="Chinese">Chinese</option>
+                        <option value="Indian">Indian</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="category-select">Filter By Categories</label>
+                    <select name="category" id="category-select" class="filter-select">
+                        <option value="">-- Select a Category --</option>
+                        <option value="Seafood">Seafood</option>
+                        <option value="Vegetarian">Vegeterian</option>
+                        <option value="Dessert">Dessert</option>
+                        <option value="Chicken">Chicken</option>
+                    </select>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section class="recipe-results">
+
+            <h2 id="results-heading"></h2>
+
+            <div class="recipe-grid">
+
+            </div>
+
+            <!-- <div class="loading-indicator" id="loading-indicator" style="display: none;">
+                <p>Loading yummy recipes...</p>
+            </div> -->
+
+
+
+        </section>
+
+
+    </main>
+
+    <div id="saved-modal" class="saved-modal hidden">
+
+        <div class="saved-content">
+            <span class="close-btn">&times;</span>
+            <h2>My Saved Recipes</h2>
+            <div id="saved-list">
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="shop-list-modal" class="saved-modal hidden">
+        <div class="saved-content">
+            <span class="close-btn">&times;</span>
+            <h2>My Shopping List</h2>
+            <div id="shop-list-content">
+
+            </div>
+
+            <div class="shop-list-footer">
+                <button id="clear-shop-list-btn" class="recipe-btn">Clear All</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="recipe-modal" class="hidden-recipe-modal">
+
+        <span class="close-recipe-modal">&times;</span>
+
+        <div id="recipe-content">
+
+            <div class="recipe-left">
+                <img src="" alt="">
+            </div>
+
+            <div class="recipe-right">
+
+                <h2>Meal Name</h2>
+                <p id="recipe-right-category">Category | Area</p>
+
+                <h3 id="ingredients-section-h3">Ingredients</h3>
+                <div class="scrollable-section ingredients-section">
+
+                    <button id="add-to-shop-list-btn" title="Add ingredients to shopping list">
+                        <i class="fa-solid fa-cart-plus"></i>
+                    </button>
+                    <ul>
+
+                    </ul>
+                </div>
+
+                <h3 id="instruction-section-h3">Instructions</h3>
+                <div class="scrollable-section instruction-section">
+                    <p>Long instructions here...</p>
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <footer>
+
+        <p>&copy; 2025 Recipeak. All Rights Reserved.</p>
+        <p>Powered by TheMealDB API</p>
+
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
