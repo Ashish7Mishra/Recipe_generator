@@ -1,3 +1,7 @@
+window.onload=function(){
+    document.body.classList.add("loaded");
+}
+
 // element xelectors
 const searchBtn = document.querySelector(".search-btn");
 const searchInput = document.getElementById("search-input");
