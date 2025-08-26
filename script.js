@@ -1,8 +1,5 @@
-window.onload=function(){
-    document.body.classList.add("loaded");
-}
+// ELEMENT SELECTORS
 
-// element xelectors
 const searchBtn = document.querySelector(".search-btn");
 const searchInput = document.getElementById("search-input");
 const recipeGrid = document.querySelector(".recipe-grid");
@@ -27,55 +24,55 @@ const clearShopListBtn = document.getElementById('clear-shop-list-btn');
 
 const STORAGE_KEY = "savedRecipes";
 
+
+// CUSTOM VARIABLES
+
 let currentRecipeIngredients = [];
 let lastSearchResults = [];
 let currentSearchItem = "";
 
 
-async function fetchInitialRecipes() {
+// INITIAL LOADER
 
+window.onload = function () {
+    document.body.classList.add("loaded");
+}
+
+// FETCH INITIAL RECIPES
+
+async function fetchInitialRecipes() {
     try {
         currentSearchItem = "Chicken";
-
         const response = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${currentSearchItem}`);
         const data = await response.json();
 
         if (data.meals) {
-
             lastSearchResults = data.meals;
             applyFilters();
         } else {
-
             lastSearchResults = [];
             showMessage("Welcome! Please search for a recipe to get started.");
         }
     } catch (error) {
-        console.error("Error fetching initial recipes:", error);
         lastSearchResults = [];
-        showMessage("Could not load recipes. Please check your connection and try searching.");
-    } finally {
-        hideLoader();
+        handleError(error);
     }
 }
 
 
-function showMessage(message) {
+// SHOW MESSAGE
 
-    recipeGrid.innerHTML = "";
+function showMessage(message) {
     recipeGrid.innerHTML = `<p class="recipe-message">${message}</p>`;
 }
 
 
-// Shopping lpst Functions
+// SHOPPING LIST FUNCTIONS
 
 clearShopListBtn.addEventListener('click', () => {
     localStorage.removeItem("shoppingList");
-
     populateShopList();
 });
-
-
-
 
 shoppingListLink.addEventListener("click", (e) => {
     e.preventDefault();
@@ -102,12 +99,9 @@ function getShopList() {
 
 function saveIngredientsToShopList(ingredients) {
     let currentList = getShopList();
-
     const ingredientsSet = new Set(currentList);
     ingredients.forEach(ingredient => ingredientsSet.add(ingredient));
-
     localStorage.setItem("shoppingList", JSON.stringify([...ingredientsSet]));
-
     alert("Ingredients have been added to your shopping list!");
 }
 
@@ -133,8 +127,7 @@ function populateShopList() {
 
     document.querySelectorAll('.remove-ingredient-btn').forEach(button => {
         button.addEventListener('click', (e) => {
-            const ingredientToRemove = e.target.dataset.ingredient;
-            removeIngredientFromShopList(ingredientToRemove);
+            removeIngredientFromShopList(e.target.dataset.ingredient);
         });
     });
 }
@@ -147,13 +140,10 @@ function removeIngredientFromShopList(ingredientToRemove) {
 }
 
 
-
-
-
-
+// DOM CONTENT LOADED
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Hamburger Menu
+    // Hamburger menu
     const hamburger = document.querySelector('.hamburger');
     const navList = document.querySelector('.nav-list');
     if (hamburger && navList) {
@@ -161,16 +151,18 @@ document.addEventListener('DOMContentLoaded', () => {
             navList.classList.toggle('active');
         });
     }
+
     fetchInitialRecipes();
 
     document.querySelectorAll('.nav-list a').forEach(link => {
         link.addEventListener('click', () => {
-            if (navList.classList.contains('active')) {
-                navList.classList.remove('active');
-            }
+            if (navList.classList.contains('active')) navList.classList.remove('active');
         });
     });
 });
+
+
+// EVENT LISTENERS
 
 searchBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -182,9 +174,7 @@ randomRecipeBtn.addEventListener("click", async () => {
     const response = await fetch("https://www.themealdb.com/api/json/v1/1/random.php");
     const data = await response.json();
     const meal = data.meals[0];
-    if (meal) {
-        populateRecipeModal(meal);
-    }
+    if (meal) populateRecipeModal(meal);
 });
 
 myList.addEventListener("click", (e) => {
@@ -201,13 +191,12 @@ closeRecipeModalBtn.addEventListener("click", () => {
     recipeModal.style.display = "none";
 });
 
-//working of filter section
-
 areaSelect.addEventListener('change', applyFilters);
-
 categorySelect.addEventListener('change', applyFilters);
 
-// API & Data Functions
+
+// FETCH RECIPE BY NAME
+
 async function findRecipeByName(mealName) {
     if (!mealName) return;
     try {
@@ -216,30 +205,33 @@ async function findRecipeByName(mealName) {
 
         currentSearchItem = mealName;
         recipeGrid.innerHTML = "";
+
         if (data.meals) {
             lastSearchResults = data.meals;
             areaSelect.value = "";
             categorySelect.value = "";
             applyFilters();
-
-        }
-        else {
+        } else {
             lastSearchResults = [];
             resultSecHead.textContent = `No results for "${mealName}"`;
             showMessage("Sorry, we couldn't find any recipes. Please try another search.");
         }
+
         syncBookmarkIcons();
-        document.getElementById('results-heading').scrollIntoView({ behavior: 'smooth' });
+        resultSecHead.scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
         lastSearchResults = [];
-        showMessage("An error occurred. Please try again later.");
+        handleError(error);
     }
 }
+
+
+// FILTER FUNCTION
 
 function applyFilters() {
     const selectedArea = areaSelect.value;
     const selectedCategory = categorySelect.value;
-    const heading = document.getElementById('results-heading');
+    const heading = resultSecHead;
 
     let headingText = `Showing results for "${currentSearchItem}"`;
     let filteredResults = lastSearchResults;
@@ -255,6 +247,7 @@ function applyFilters() {
         filteredResults = filteredResults.filter(meal => meal.strCategory === selectedCategory);
         headingText = `Showing ${selectedCategory} recipes from "${currentSearchItem}"`;
     }
+
     heading.textContent = headingText;
     recipeGrid.innerHTML = "";
 
@@ -263,24 +256,24 @@ function applyFilters() {
     } else {
         showMessage("No recipes match your filter criteria.");
     }
+
     syncBookmarkIcons();
 }
 
 
+// RECIPE CARD FUNCTIONS
 
-//recipe card 
 function createRecipeCard(mealData) {
     let card = document.createElement("div");
     card.classList.add("recipe-card");
     card.dataset.id = mealData.idMeal;
 
     const tagsHTML = `<p class="meal-tags">Category: ${mealData.strCategory} | Area: ${mealData.strArea}</p>`;
-
     card.innerHTML = `
         <img src="${mealData.strMealThumb}" alt="${mealData.strMeal}" />
         <h3>${mealData.strMeal}</h3>
-          ${tagsHTML}     
-         <div class="card-buttons">
+        ${tagsHTML}     
+        <div class="card-buttons">
             <button class="recipe-btn">View Recipe</button>
             <i class="fa-regular fa-bookmark bookmark-icon"></i>
         </div>
@@ -308,8 +301,9 @@ function createRecipeCard(mealData) {
     });
 }
 
-function populateRecipeModal(mealData) {
+// POPULATE RECIPE MODAL
 
+function populateRecipeModal(mealData) {
     currentRecipeIngredients = [];
 
     const leftDivImg = recipeModal.querySelector(".recipe-left img");
@@ -322,23 +316,25 @@ function populateRecipeModal(mealData) {
 
     const ingList = rightDiv.querySelector(".ingredients-section ul");
     ingList.innerHTML = "";
+
     for (let i = 1; i <= 20; i++) {
         const ingredient = mealData[`strIngredient${i}`];
         const measure = mealData[`strMeasure${i}`];
         if (ingredient && ingredient.trim() !== "") {
-
             const ingredientString = `${ingredient} - ${measure}`;
             currentRecipeIngredients.push(ingredientString);
 
-
             const li = document.createElement("li");
-            li.textContent = `${ingredient} - ${measure}`;
+            li.textContent = ingredientString;
             ingList.appendChild(li);
         }
     }
 
     rightDiv.querySelector(".instruction-section p").textContent = mealData.strInstructions;
 }
+
+
+// SAVED RECIPES FUNCTIONS
 
 function populateSavedList() {
     const savedList = document.getElementById("saved-list");
@@ -369,14 +365,14 @@ function populateSavedList() {
             populateRecipeModal(mealData);
             recipeModal.style.display = "flex";
             savedModal.classList.add("hidden");
-        })
-
+        });
 
         savedItem.querySelector(".remove-saved").addEventListener("click", () => {
             removeRecipe(mealData.idMeal);
             savedItem.remove();
             updateBookmarkIcon(mealData.idMeal, false);
         });
+
         savedList.appendChild(savedItem);
     });
 }
@@ -385,7 +381,7 @@ function syncBookmarkIcons() {
     const savedRecipes = getSavedRecipes();
     savedRecipes.forEach(mealData => {
         updateBookmarkIcon(mealData.idMeal, true);
-    })
+    });
 }
 
 function updateBookmarkIcon(mealId, isSaved) {
@@ -396,7 +392,9 @@ function updateBookmarkIcon(mealId, isSaved) {
     icon.classList.toggle("fa-regular", !isSaved);
 }
 
-// Local Storage Functions
+
+// LOCAL STORAGE FUNCTIONS
+
 function getSavedRecipes() {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved ? JSON.parse(saved) : [];
@@ -419,4 +417,17 @@ function removeRecipe(mealId) {
     let savedRecipes = getSavedRecipes();
     savedRecipes = savedRecipes.filter(r => r.idMeal !== mealId);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedRecipes));
+}
+
+
+// ERROR HANDLING
+
+function handleError(error) {
+    let msg = "Something went wrong. Please try again. ";
+    if (error.name === "TypeError") msg = "Check your internet connection. ";
+    else if (error.message?.includes("404")) msg = "Recipe not found";
+    else if (error.message?.includes("Failed to get the data")) msg = "Server is unrechable. ";
+
+    lastSearchResults = [];
+    showMessage(msg);
 }
